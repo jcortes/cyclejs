@@ -3,7 +3,7 @@ import Cycle from '@cycle/core';
 
 // Logic (functional)
 function main (sources) {
-  const click$ = sources.DOM;
+  const click$ = sources.DOM.selectEvents('span', 'mouseover');
   return {
     DOM: click$
       .startWith(undefined)
@@ -49,7 +49,12 @@ function DOMDriver (obj$) {
     container.appendChild(element);
   });
 
-  const DOMSource = Rx.Observable.fromEvent(document, 'click');
+  const DOMSource = {
+    selectEvents: function (tagName, eventType) {
+      return Rx.Observable.fromEvent(document, eventType)
+        .filter(ev => ev.target.tagName === tagName.toUpperCase());
+    }
+  };
   return DOMSource;
 }
 
