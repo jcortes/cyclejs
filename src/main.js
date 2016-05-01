@@ -1,8 +1,9 @@
 import {Rx} from 'rx';
+import Cycle from '@cycle/core';
 
 // Logic (functional)
-function main (DOMSource) {
-  const click$ = DOMSource;
+function main (sources) {
+  const click$ = sources.DOM;
   return {
     DOM: click$
       .startWith(undefined)
@@ -38,19 +39,27 @@ function consoleLogDriver (msg$) {
 // b = g(a)
 // bProxy.imitate(b)
 
-function run (mainFn, drivers) {
-  const proxyDOMSource = new Rx.Subject();
-  const sinks = mainFn(proxyDOMSource);
-  const DOMSource = drivers.DOM(sinks.DOM);
-  DOMSource.subscribe(click => proxyDOMSource.onNext(click));
-  // Object.keys(drivers).forEach(key => {
-  //   drivers[key](sinks[key]);
-  // });
-}
+// function run (mainFn, drivers) {
+//   // const proxyDOMSource = new Rx.Subject();
+//   // const sinks = mainFn(proxyDOMSource);
+//   // const DOMSource = drivers.DOM(sinks.DOM);
+//   // DOMSource.subscribe(click => proxyDOMSource.onNext(click));
+//
+//   const proxySources = {};
+//   Object.keys(drivers).forEach(key => {
+//     proxySources[key] = new Rx.Subject();
+//   });
+//   const sinks = mainFn(proxySources);
+//   Object.keys(drivers).forEach(key => {
+//     const source = drivers[key](sinks[key]);
+//     source.subscribe(x => proxySources[key].onNext(x));
+//   });
+// }
 
 const drivers = {
   DOM: DOMDriver,
   Log: consoleLogDriver
 };
 
-run(main, drivers);
+// run(main, drivers);
+Cycle.run(main, drivers);
