@@ -2,8 +2,12 @@ import {Rx} from 'rx';
 
 // Logic (functional)
 function main () {
-  return Rx.Observable.timer(0, 1000)
-    .map((i) => `Seconds elapsed ${i}`);
+  return {
+    DOM: Rx.Observable.timer(0, 1000)
+      .map((i) => `Seconds elapsed ${i}`),
+    Log: Rx.Observable.timer(0, 2000)
+      .map(i => i * 2)
+  }
 }
 
 // Effects (imperative)
@@ -18,6 +22,6 @@ function consoleLogEffect (msg$) {
   msg$.subscribe(msg => console.log(msg));
 }
 
-const sink = main();
-DOMEffects(sink);
-consoleLogEffect(sink);
+const sinks = main();
+DOMEffects(sinks.DOM);
+consoleLogEffect(sinks.Log);
