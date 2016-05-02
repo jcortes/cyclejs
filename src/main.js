@@ -14,7 +14,7 @@ function main (sources) {
       .flatMapLatest(() =>
         Rx.Observable.timer(0, 1000)
         .map(i =>
-          h1([
+          h1({style: {background: 'red'}}, [
             span([
               `Seconds elapsed ${i}`
             ])
