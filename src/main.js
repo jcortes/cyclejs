@@ -1,20 +1,30 @@
-import {Rx} from 'rx';
+import Rx from 'rx';
 import Cycle from '@cycle/core';
 import CycleDOM from '@cycle/dom';
 
-const {input, label, hr, div, h1, makeDOMDriver} = CycleDOM;
+const {button, p, label, div, makeDOMDriver} = CycleDOM;
 
 // Logic (functional)
 function main (sources) {
-  const inputEv$ = sources.DOM.select('.field').events('input');
-  const name$ = inputEv$.map(ev => ev.target.value).startWith('');
+  const decrementClick$ = sources.DOM.select('.decrement').events('click');
+  const incrementClick$ = sources.DOM.select('.increment').events('click');
+
+  const decrementAction$ = decrementClick$.map(ev => - 1);
+  const incrementAction$ = incrementClick$.map(ev => + 1);
+
+  const number$ = Rx.Observable.of(10)
+    .merge(decrementAction$)
+    .merge(incrementAction$)
+    .scan((prev, curr) => prev + curr);
+
   return {
-    DOM: name$.map(name =>
+    DOM: number$.map(number =>
       div([
-        label('Name: '),
-        input('.field', {type: 'text'}),
-        hr(),
-        h1('', `Hola ${name}!`)
+        button('.decrement', 'Decrement'),
+        button('.increment', 'Increment'),
+        p([
+          label(String(number))
+        ])
       ])
     )
   }
