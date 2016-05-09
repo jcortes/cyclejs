@@ -10,27 +10,13 @@ let main = require('./main').default;
 export default () =>
 	run(main, {
 		DOM: makeHTMLDriver(),
-		HTTP: makeHTTPDriver(),
-		props$: () => Rx.Observable.of({
-			label: 'Height',
-			unit: 'cm',
-			min: 140,
-			max: 220,
-			init: 170
-		})
+		HTTP: makeHTTPDriver()
 	});
 
 if (CLIENT) {
 	let drivers = {
 		DOM: restartable(makeDOMDriver('#root'), { pauseSinksWhileReplaying: false }),
-		HTTP: makeHTTPDriver(),
-		props$: () => Rx.Observable.of({
-			label: 'Height',
-			unit: 'cm',
-			min: 140,
-			max: 220,
-			init: 170
-		})
+		HTTP: makeHTTPDriver()
 	};
 
 	let rerun = rerunner(run);
