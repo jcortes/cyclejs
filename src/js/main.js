@@ -12,7 +12,7 @@ export default ({ DOM }) => {
 		init: 70
 	});
 	const weightSinks = LabeledSlider({
-		DOM: DOM.select('.weight'), props$: weightProps$
+		DOM: DOM.select('.weight'), props: weightProps$
 	});
 	const weightVTree$ = weightSinks.DOM.map(vtree => {
 		vtree.properties.className += ' weight';
@@ -27,7 +27,7 @@ export default ({ DOM }) => {
 		init: 170
 	});
 	const heightSinks = LabeledSlider({
-		DOM: DOM.select('.height'), props$: heightProps$
+		DOM: DOM.select('.height'), props: heightProps$
 	});
 	const heightVTree$ = heightSinks.DOM.map(vtree => {
 		vtree.properties.className += ' height';
