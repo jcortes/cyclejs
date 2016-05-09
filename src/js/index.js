@@ -9,14 +9,12 @@ let main = require('./main').default;
 
 export default () =>
 	run(main, {
-		DOM: makeHTMLDriver(),
-		HTTP: makeHTTPDriver()
+		DOM: makeHTMLDriver()
 	});
 
 if (CLIENT) {
 	let drivers = {
-		DOM: restartable(makeDOMDriver('#root'), { pauseSinksWhileReplaying: false }),
-		HTTP: makeHTTPDriver()
+		DOM: restartable(makeDOMDriver('#root'), { pauseSinksWhileReplaying: false })
 	};
 
 	let rerun = rerunner(run);

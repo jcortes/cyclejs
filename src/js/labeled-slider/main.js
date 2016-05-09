@@ -2,7 +2,7 @@ let intent = require('./intent').default;
 let model = require('./model').default;
 let view = require('./view').default;
 
-export default ({ DOM, HTTP, props$ }) => {
+export default ({ DOM, props$ }) => {
 	// DOM read effect: detect slider change
 	const change$ = intent(DOM);
 	// recalculate BMI
