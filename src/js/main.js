@@ -1,7 +1,12 @@
 import Rx from 'rx';
 import { div } from '@cycle/dom';
+import isolate from '@cycle/isolate';
 
 let LabeledSlider = require('./labeled-slider/main').default;
+
+let IsolatedLabeledSlider = ({ DOM, props }) => {
+	return isolate(LabeledSlider)({ DOM, props });
+}
 
 export default ({ DOM }) => {
 	const weightProps$ = Rx.Observable.of({
@@ -11,13 +16,10 @@ export default ({ DOM }) => {
 		max: 150,
 		init: 70
 	});
-	const weightSinks = LabeledSlider({
-		DOM: DOM.select('.weight'), props: weightProps$
+	const weightSinks = IsolatedLabeledSlider({
+		DOM, props: weightProps$
 	});
-	const weightVTree$ = weightSinks.DOM.map(vtree => {
-		vtree.properties.className += ' weight';
-		return vtree;
-	});
+	const weightVTree$ = weightSinks.DOM;
 
 	const heightProps$ = Rx.Observable.of({
 		label: 'Height',
@@ -26,13 +28,10 @@ export default ({ DOM }) => {
 		max: 220,
 		init: 170
 	});
-	const heightSinks = LabeledSlider({
-		DOM: DOM.select('.height'), props: heightProps$
+	const heightSinks = IsolatedLabeledSlider({
+		DOM, props: heightProps$
 	});
-	const heightVTree$ = heightSinks.DOM.map(vtree => {
-		vtree.properties.className += ' height';
-		return vtree;
-	});
+	const heightVTree$ = heightSinks.DOM;
 
 	const vtree$ = Rx.Observable.combineLatest(
 		weightVTree$,
