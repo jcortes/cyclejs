@@ -4,7 +4,7 @@ let intent = require('./intent').default;
 let model = require('./model').default;
 let view = require('./view').default;
 
-export default ({ DOM, props }) => {
+let LabeledSlider = ({ DOM, props }) => {
 	// DOM read effect: detect slider change
 	const change$ = intent(DOM);
 	// recalculate BMI
@@ -17,6 +17,6 @@ export default ({ DOM, props }) => {
 	};
 }
 
-// export default ({ DOM, props }) => {
-// 	return isolate(LabeledSlider)({ DOM, props });
-// }
+export default ({ DOM, props }) => {
+	return isolate(LabeledSlider)({ DOM, props });
+}

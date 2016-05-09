@@ -1,14 +1,7 @@
 import Rx from 'rx';
 import { div, h2 } from '@cycle/dom';
-import isolate from '@cycle/isolate';
 
-let LabeledSlider = require('./labeled-slider/main').default;
-
-let IsolatedLabeledSlider = ({ DOM, props }) => {
-	return isolate(LabeledSlider)({ DOM, props });
-}
-
-// let IsolatedLabeledSlider = require('./labeled-slider/main').default;
+let IsolatedLabeledSlider = require('./labeled-slider/main').default;
 
 export default ({ DOM }) => {
 	const weightProps$ = Rx.Observable.of({
