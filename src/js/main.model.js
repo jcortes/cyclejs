@@ -1,13 +1,15 @@
 import Rx from 'rx';
 
-export default (changeWeight$, changeHeight$) => {
-	return Rx.Observable.combineLatest(
-		changeWeight$.startWith(70),
-		changeHeight$.startWith(170),
-		(weight, height) => {
-			const heightMeters = height * 0.01;
-			const bmi = Math.round(weight / (heightMeters * heightMeters));
-			return {bmi, weight, height};
-		}
-	);
+export default (newValue$, props$) => {
+	const initialValue$ = props$.map(props => props.init).first();
+	const value$ = initialValue$.concat(newValue$);
+	return Rx.Observable.combineLatest(value$, props$, (value, props) => {
+		return {
+			label: props.label,
+			unit: props.unit,
+			max: props.max,
+			min: props.min,
+			value: value
+		};
+	});
 }
