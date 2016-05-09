@@ -1,3 +1,5 @@
+import isolate from '@cycle/isolate';
+
 let intent = require('./intent').default;
 let model = require('./model').default;
 let view = require('./view').default;
@@ -10,6 +12,11 @@ export default ({ DOM, props }) => {
 	// DOM write effect: display BMI
 	const vtree$ = view(state$);
 	return {
-		DOM: vtree$
+		DOM: vtree$,
+    value: state$.map(state => state.value)
 	};
 }
+
+// export default ({ DOM, props }) => {
+// 	return isolate(LabeledSlider)({ DOM, props });
+// }
