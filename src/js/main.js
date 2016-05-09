@@ -1,39 +1,19 @@
-import Rx from 'rx';
-import { div, input, label, h2 } from '@cycle/dom';
-import { Input } from './helpers';
+// import Rx from 'rx';
+// import { div, input, label, h2 } from '@cycle/dom';
+// import { Input } from './helpers';
 
-export default ({ DOM, HTTP }) => {
+let intent = require('./main.intent').default;
+let model = require('./main.model').default;
+let view = require('./main.view').default;
+
+export default ({ DOM }) => {
 	// DOM read effect: detect slider change
-	const changeWeight$ = DOM.select('.weight').events('input')
-		.map(ev => ev.target.value);
-	const changeHeight$ = DOM.select('.height').events('input')
-		.map(ev => ev.target.value)
-
+	const {changeWeight$, changeHeight$} = intent(DOM);
 	// recalculate BMI
-	const state$ = Rx.Observable.combineLatest(
-		changeWeight$.startWith(70),
-		changeHeight$.startWith(170),
-		(weight, height) => {
-			const heightMeters = height * 0.01;
-			const bmi = Math.round(weight / (heightMeters * heightMeters));
-			return {bmi, weight, height};
-		}
-	)
-
+	const state$ = model(changeWeight$, changeHeight$);
 	// DOM write effect: display BMI
+	const vtree$ = view(state$);
 	return {
-		DOM: state$.map(state =>
-			div([
-				div([
-					label('Weight: ' + state.weight + 'kg'),
-					input('.weight', {type: 'range', min: 40, max: 150, value: state.weight})
-				]),
-				div([
-					label('Height: ' + state.height + 'cm'),
-					input('.height', {type: 'range', min: 140, max: 220, value: state.height})
-				]),
-				h2('BMI is ' + state.bmi)
-			])
-		)
+		DOM: vtree$
 	};
 }
