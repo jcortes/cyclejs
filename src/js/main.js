@@ -1,40 +1,39 @@
-// import { Observable as $ } from 'rx';
 import Rx from 'rx';
-import { button, h1, h4, a, div } from '@cycle/dom';
+import { div, input, label, h2 } from '@cycle/dom';
 import { Input } from './helpers';
 
 export default ({ DOM, HTTP }) => {
+	// DOM read effect: detect slider change
+	const changeWeight$ = DOM.select('.weight').events('input')
+		.map(ev => ev.target.value);
+	const changeHeight$ = DOM.select('.height').events('input')
+		.map(ev => ev.target.value)
 
-	const clickEvent$ = DOM.select('.get-first').events('click');
+	// recalculate BMI
+	const state$ = Rx.Observable.combineLatest(
+		changeWeight$.startWith(70),
+		changeHeight$.startWith(170),
+		(weight, height) => {
+			const heightMeters = height * 0.01;
+			const bmi = Math.round(weight / (heightMeters * heightMeters));
+			return {bmi, weight, height};
+		}
+	)
 
-  const request$ = clickEvent$.map(ev => {
-    return {
-      url: 'http://jsonplaceholder.typicode.com/users/1',
-      method: 'GET'
-    };
-  });
-
-  const response$$ = HTTP
-    .filter(response$ =>
-      response$.request.url === 'http://jsonplaceholder.typicode.com/users/1');
-
-  const response$ = response$$.switch();
-
-  const firstUser$ = response$
-    .map(response => response.body)
-    .startWith(undefined);
-
+	// DOM write effect: display BMI
 	return {
-		DOM: firstUser$.map(firstUser =>
-      div([
-        button('.get-first', 'Get first user'),
-        !firstUser ? undefined : div('.user-details', [
-          h1('.user-name', firstUser.name),
-          h4('.user-email', firstUser.email),
-          a('.user-website', {href: firstUser.website}, firstUser.website)
-        ])
-      ])
-    ),
-		HTTP: request$
+		DOM: state$.map(state =>
+			div([
+				div([
+					label('Weight: ' + state.weight + 'kg'),
+					input('.weight', {type: 'range', min: 40, max: 150, value: state.weight})
+				]),
+				div([
+					label('Height: ' + state.height + 'cm'),
+					input('.height', {type: 'range', min: 140, max: 220, value: state.height})
+				]),
+				h2('BMI is ' + state.bmi)
+			])
+		)
 	};
 }
